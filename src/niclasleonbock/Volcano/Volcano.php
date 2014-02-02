@@ -9,16 +9,24 @@ class Volcano
      * @param  callable|string $glue A callable (function) or string to use for glueing the elements.
      * @return string
      */
-    public static function implode($glue, array $pieces)
+    public static function implode($glue, $pieces)
     {
-        if (is_callable($glue)) {
+        if (!is_array($pieces) && !$pieces instanceof \Traversable) {
+            throw new \InvalidArgumentException('Pieces must be iterable (array or traversable).');
+        }
+
+        if (is_callable($glue) || !is_array($pieces)) {
             $string = '';
 
-            foreach ($pieces as $count => $piece) {
+            $total = is_array($pieces) ? count($pieces) : iterator_count($pieces);
+            $count = 0;
+
+            foreach ($pieces as $key => $piece) {
+                $count++;
                 $string .= $piece;
 
-                if ($count < count($pieces)-1) {
-                     $string .= call_user_func($glue, $piece, $count);
+                if ($count < $total) {
+                     $string .= is_string($glue) ? $glue : call_user_func($glue, $piece, $key, $count, $pieces);
                 }
             }
 
