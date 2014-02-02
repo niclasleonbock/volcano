@@ -33,11 +33,13 @@ class Test implements IteratorAggregate
     public $person2 = 'Skyler White';
     public $person3 = 'Jesse Pinkman';
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->person4 = 'Hank Schrader';
     }
 
-    public function getIterator() {
+    public function getIterator()
+    {
         return new ArrayIterator($this);
     }
 }
@@ -50,4 +52,5 @@ echo 'These people like it: ' . Volcano::implode(', ', $class);
 echo Volcano::implode(function ($piece, $key, $count, $pieces) {
     return ($count == iterator_count($pieces)-1 ? ' and ' : ', ');
 }, $class) . ' like it!';
+
 ```
