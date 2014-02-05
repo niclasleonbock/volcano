@@ -1,4 +1,5 @@
 {
+    "name": "niclasleonbock/volcano",
     "autoload": {
         "psr-0": { "niclasleonbock": "src/" }
     }
