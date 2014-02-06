@@ -39,19 +39,40 @@ class Volcano
     }
 
     /**
-     * Implodes a string using either a callable function or a string as glue.
+     * Explodes a string delimited by another string or an array of strings.
      *
-     * @param  string $delimeter Delimeter to use for splitting the elements.
+     * @param  string|array $delimeter Delimeter to use for splitting the elements.
      * @param  string $string    String to be split.
-     * @param  int    $int       Additional integer, used for limit in explode or chunk size in str_split.
      * @return array
      */
-    public static function explode($delimiter, $string, $int = 1)
+    public static function explode($delimiter, $string)
     {
-        if ($delimiter == '') {
-            return str_split($string, $int);
+        if (!is_array($delimiter) && !is_string($delimiter)) {
+            throw new \InvalidArgumentException('Delimiter must be of type array or string.');
         }
 
-        return explode($delimiter, $string, $int);
+        if ($delimiter == '') {
+            return str_split($string);
+        }
+
+        if (is_array($delimiter)) {
+            return self::multiexplode($delimiter, $string);
+        }
+
+        return explode($delimiter, $string);
+    }
+
+    /**
+     * Explodes a string delimited by an array of strings.
+     *
+     * @param  array $delimeter Delimeter to use for splitting the elements.
+     * @param  string $string    String to be split.
+     * @return array
+     */
+    public static function multiexplode(array $delimiters, $string)
+    {
+        $delimiter = array_values($delimiters)[0];
+
+        return explode($delimiter, str_replace($delimiters, $delimiter, $string));
     }
 }
