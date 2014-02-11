@@ -6,16 +6,18 @@ class Volcano
     /**
      * Implodes an array using either a callable function or a string as glue.
      *
-     * @param  callable|string $glue A callable (function) or string to use for glueing the elements.
+     * @param  callable|string    $glue        A callable (function) or string to use for glueing the elements.
+     * @param  array|Traversable  $pieces      Pieces to be imploded (may be Traversable or an array).
+     * @param  string             $displayKey  Key to use for displaying the values (for objects and associative arrays only).
      * @return string
      */
-    public static function implode($glue, $pieces)
+    public static function implode($glue, $pieces, $displayKey = null)
     {
         if (!is_array($pieces) && !$pieces instanceof \Traversable) {
             throw new \InvalidArgumentException('Pieces must be iterable (array or traversable).');
         }
 
-        if (is_callable($glue) || !is_array($pieces)) {
+        if (is_callable($glue) || !is_array($pieces) || null !== $displayKey) {
             $string = '';
 
             $total = is_array($pieces) ? count($pieces) : iterator_count($pieces);
@@ -23,7 +25,16 @@ class Volcano
 
             foreach ($pieces as $key => $piece) {
                 $count++;
-                $string .= $piece;
+
+                if (null !== $displayKey) {
+                    if (is_object($piece)) {
+                        $string .= $piece->$displayKey;
+                    } else {
+                        $string .= $piece[$displayKey];
+                    }
+                } else {
+                    $string .= $piece;
+                }
 
                 if ($count < $total) {
                      $string .= is_string($glue) ? $glue : call_user_func($glue, $piece, $key, $count, $pieces);
