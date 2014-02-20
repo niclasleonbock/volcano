@@ -82,7 +82,8 @@ class Volcano
      */
     public static function multiexplode(array $delimiters, $string)
     {
-        $delimiter = array_values($delimiters)[0];
+        $delimiter = array_values($delimiters);
+        $delimiter = $delimiter[0]; // fix for old php versions
 
         return explode($delimiter, str_replace($delimiters, $delimiter, $string));
     }
