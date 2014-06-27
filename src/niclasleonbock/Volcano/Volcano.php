@@ -8,7 +8,7 @@ class Volcano
      *
      * @param  callable|string    $glue        A callable (function) or string to use for glueing the elements.
      * @param  array|Traversable  $pieces      Pieces to be imploded (may be Traversable or an array).
-     * @param  string             $displayKey  Key to use for displaying the values (for objects and associative arrays only).
+     * @param  callable|string    $displayKey  Key to use for displaying the values (for objects and associative arrays only).
      * @return string
      */
     public static function implode($glue, $pieces, $displayKey = null)
@@ -27,7 +27,9 @@ class Volcano
                 $count++;
 
                 if (null !== $displayKey) {
-                    if (is_object($piece)) {
+                    if (is_callable($displayKey)) {
+                        $string .= call_user_func($displayKey, $piece, $key, $count, $pieces);
+                    } else if (is_object($piece)) {
                         $string .= $piece->$displayKey;
                     } else {
                         $string .= $piece[$displayKey];
